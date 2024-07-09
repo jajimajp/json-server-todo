@@ -52,13 +52,23 @@ const App = () => {
       <h1>ToDos</h1>
       <input type="text" value=${newTodo} onChange=${handleChange} />
       <button onClick=${handleClick}>Add</button>
-      <ul>
-        ${todos.map((todo) => html`
-          <li key=${todo.id}>${todo.title}</li>
-        `)}
-      </ul>
+      <${TodoList} todos=${todos} />
     </div>
   `;
 }
+
+const TodoList = ({ todos }) => html`
+  <ul>
+    ${todos.map((todo) => html`
+      <${TodoItem} key=${todo.id} todo=${todo} />
+    `)}
+  </ul>
+`;
+
+const TodoItem = ({ todo }) => {
+  return html`
+    <li>${todo.title}</li>
+  `;
+};
 
 render(html`<${App} />`, document.body);
