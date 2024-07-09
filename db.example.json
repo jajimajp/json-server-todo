@@ -2,11 +2,13 @@
   "todos": [
     {
       "id": 1,
-      "title": "First task"
+      "title": "First task",
+      "completed": true
     },
     {
       "id": 2,
-      "title": "Second task"
+      "title": "Second task",
+      "completed": false
     }
   ]
 }

@@ -22,6 +22,15 @@ const api = {
     }
     return await res.json();
   },
+  deleteTodo: async (todo) => {
+    const res = await fetch(`/todos/${todo.id}`, {
+      method: 'DELETE',
+    });
+    if (!res.ok) {
+      throw new HTTPError(`Error: ${res.statusText}`);
+    }
+    return await res.json();
+  },
 };
 
 const App = () => {
@@ -39,12 +48,19 @@ const App = () => {
     if (newTodo !== '') {
       const title = newTodo;
       api
-        .postTodo({ title })
+        .postTodo({ title, completed: false })
         .then((res) => {
           setTodos([...todos, res]);
           setNewTodo('');
         });
     }
+  };
+  const deleteTodo = (todo) => {
+    api
+      .deleteTodo(todo)
+      .then(() => {
+        setTodos([...todos.filter(({ id }) => id !== todo.id)]);
+      });
   };
 
   return html`
@@ -52,22 +68,26 @@ const App = () => {
       <h1>ToDos</h1>
       <input type="text" value=${newTodo} onChange=${handleChange} />
       <button onClick=${handleClick}>Add</button>
-      <${TodoList} todos=${todos} />
+      <${TodoList} todos=${todos} deleteTodo=${deleteTodo} />
     </div>
   `;
 }
 
-const TodoList = ({ todos }) => html`
+const TodoList = ({ todos, deleteTodo }) => html`
   <ul>
     ${todos.map((todo) => html`
-      <${TodoItem} key=${todo.id} todo=${todo} />
+      <${TodoItem} key=${todo.id} todo=${todo} deleteTodo=${() => deleteTodo(todo)} />
     `)}
   </ul>
 `;
 
-const TodoItem = ({ todo }) => {
+const TodoItem = ({ todo, deleteTodo }) => {
   return html`
-    <li>${todo.title}</li>
+    <li>
+      <input type="checkbox" checked=${todo.completed} />
+      ${todo.title}
+      <button onClick=${deleteTodo}>Delete</button>
+    </li>
   `;
 };
 
