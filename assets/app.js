@@ -86,17 +86,25 @@ const App = () => {
   };
 
   return html`
-    <div>
+    <div className="container">
       <h1>ToDos</h1>
-      <input type="text" value=${newTodo} onChange=${handleChange} />
-      <button onClick=${handleClick}>Add</button>
+      <div className="new-todo">
+        <input
+          type="text"
+          value=${newTodo}
+          onChange=${handleChange}
+          className="new-todo-input"
+          placeholder="What should be done?"
+        />
+        <button onClick=${handleClick} className="new-todo-btn">Add</button>
+      </div>
       <${TodoList} todos=${todos} toggleTodo=${toggleTodo} deleteTodo=${deleteTodo} />
     </div>
   `;
 }
 
 const TodoList = ({ todos, toggleTodo, deleteTodo }) => html`
-  <ul>
+  <ul className="todo-list">
     ${todos.map((todo) => html`
       <${TodoItem} key=${todo.id} todo=${todo} toggleTodo=${() => toggleTodo(todo)} deleteTodo=${() => deleteTodo(todo)} />
     `)}
@@ -105,9 +113,9 @@ const TodoList = ({ todos, toggleTodo, deleteTodo }) => html`
 
 const TodoItem = ({ todo, toggleTodo, deleteTodo }) => {
   return html`
-    <li>
+    <li className="todo-list-item">
       <input type="checkbox" checked=${todo.completed} onChange=${toggleTodo} />
-      ${todo.title}
+      <span className=${"todo-list-item-text" + (todo.completed ? " checked" : "")}>${todo.title}</span>
       <button onClick=${deleteTodo}>Delete</button>
     </li>
   `;
