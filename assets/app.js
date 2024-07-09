@@ -22,6 +22,17 @@ const api = {
     }
     return await res.json();
   },
+  putTodo: async (todo) => {
+    const res = await fetch(`/todos/${todo.id}`, {
+      method: 'PUT',
+      body: JSON.stringify(todo),
+      headers: { 'Content-Type': 'application/json' },
+    });
+    if (!res.ok) {
+      throw new HTTPError(`Error: ${res.statusText}`);
+    }
+    return await res.json();
+  },
   deleteTodo: async (todo) => {
     const res = await fetch(`/todos/${todo.id}`, {
       method: 'DELETE',
@@ -55,6 +66,17 @@ const App = () => {
         });
     }
   };
+  const toggleTodo = (todo) => {
+    const toggled = {
+      ...todo,
+      completed: !todo.completed,
+    };
+    api
+      .putTodo(toggled)
+      .then(() => {
+        setTodos([...todos.map((t) => t.id !== todo.id ? t : toggled)]);
+      });
+  };
   const deleteTodo = (todo) => {
     api
       .deleteTodo(todo)
@@ -68,23 +90,23 @@ const App = () => {
       <h1>ToDos</h1>
       <input type="text" value=${newTodo} onChange=${handleChange} />
       <button onClick=${handleClick}>Add</button>
-      <${TodoList} todos=${todos} deleteTodo=${deleteTodo} />
+      <${TodoList} todos=${todos} toggleTodo=${toggleTodo} deleteTodo=${deleteTodo} />
     </div>
   `;
 }
 
-const TodoList = ({ todos, deleteTodo }) => html`
+const TodoList = ({ todos, toggleTodo, deleteTodo }) => html`
   <ul>
     ${todos.map((todo) => html`
-      <${TodoItem} key=${todo.id} todo=${todo} deleteTodo=${() => deleteTodo(todo)} />
+      <${TodoItem} key=${todo.id} todo=${todo} toggleTodo=${() => toggleTodo(todo)} deleteTodo=${() => deleteTodo(todo)} />
     `)}
   </ul>
 `;
 
-const TodoItem = ({ todo, deleteTodo }) => {
+const TodoItem = ({ todo, toggleTodo, deleteTodo }) => {
   return html`
     <li>
-      <input type="checkbox" checked=${todo.completed} />
+      <input type="checkbox" checked=${todo.completed} onChange=${toggleTodo} />
       ${todo.title}
       <button onClick=${deleteTodo}>Delete</button>
     </li>
