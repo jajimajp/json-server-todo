@@ -11,7 +11,7 @@ const api = {
     }
     return await res.json();
   },
-  postTodos: async (todo) => {
+  postTodo: async (todo) => {
     const res = await fetch('/todos', {
       method: 'POST',
       body: JSON.stringify(todo),
@@ -39,7 +39,7 @@ const App = () => {
     if (newTodo !== '') {
       const title = newTodo;
       api
-        .postTodos({ title })
+        .postTodo({ title })
         .then((res) => {
           setTodos([...todos, res]);
           setNewTodo('');
